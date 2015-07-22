@@ -1,0 +1,216 @@
+<html>
+  <head>
+    <title>SceneHash</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Abel|Open+Sans:400,600" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='css/leaflet.css') }}" rel="stylesheet" />
+    <script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <style>
+.btn-custom {
+  background-color: hsl(220, 0%, 79%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#dddddd", endColorstr="#c9c9c9");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#dddddd), to(#c9c9c9));
+  background-image: -moz-linear-gradient(top, #dddddd, #c9c9c9);
+  background-image: -ms-linear-gradient(top, #dddddd, #c9c9c9);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #c9c9c9));
+  background-image: -webkit-linear-gradient(top, #dddddd, #c9c9c9);
+  background-image: -o-linear-gradient(top, #dddddd, #c9c9c9);
+  background-image: linear-gradient(#dddddd, #c9c9c9);
+  border-color: #c9c9c9 #c9c9c9 hsl(220, 0%, 77%);
+  color: #333 !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.13);
+  -webkit-font-smoothing: antialiased;
+}
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background-image: url("/static/img/city_back.jpg");
+      background-repeat: no-repeat;
+      background-color: #fff;
+      color: #111;
+    }
+
+    input, select, textarea{
+      color: #333;
+   }
+
+#venue_list {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #bbb;
+    background-color: #fff;
+    padding: 6px;
+}
+
+.form-control {
+    border: 1;
+    border-color: #bbb;
+}
+
+a:link {
+    color: #111;
+}
+
+/* visited link */
+a:visited {
+    color: #111;
+}
+
+/* mouse over link */
+a:hover {
+    color: #111;
+}
+
+/* selected link */
+a:active {
+    color: #111;
+}
+
+    </style>
+
+  </head>
+
+{% import 'macros.html' as macros %} 
+
+  <body>
+
+
+
+<div class="container">
+    <!--Row with two equal columns-->
+    <div class="row">
+        <br/>
+        <div class="col-sm-7">
+          <a href="/" style="font-size: 230%;">Scene Hash</a> &nbsp; &nbsp; Find your sound.
+        </div>
+        <br/>
+        <div class="col-sm-3">
+          <a href="/slides">Slides</a> 
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-10">
+               <a href="/SF"><b>San Francisco</b></a> &nbsp; &diams; &nbsp;
+               <a href="/LA"><b>Los Angeles</b></a> &nbsp; &diams; &nbsp;
+               <a href="/SD"><b>San Diego</b></a> &nbsp; &diams; &nbsp;
+               <a href="/CHI"><b>Chicago</b></a> &nbsp; &diams; &nbsp;
+               <a href="/CIN"><b>Cincinnati</b></a> &nbsp; 
+        </div>
+    </div>
+
+    
+    <!--Row with two columns divided in 1:2 ratio-->
+    <div class="row">
+        <br />
+        <form method="post" action="/{{ city_region }}"  id="db_post" name="db_post">
+          <div class="col-sm-7">
+               {{ form1.hidden_tag() }}
+               {{ macros.render_field(form1.dbNotes, placeholder='Enter artist or band(s)...', type='dbNotes', label_visible=false) }}
+               {{ macros.render_field(form1.fld2, placeholder='city', type='fld2', label_visible=false) }}
+          </div>
+          <div class="col-sm-3">
+             <button type="submit" class="btn btn-custom">Submit</button>
+          </div>
+        </form>
+    </div>
+    
+    <div class="row">
+        <div class="col-sm-5">
+           <div id="map" ></div>
+        </div>
+        <div class="col-sm-5">
+           <div id="venue_list" > </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+$(function(){
+
+   var metro_region = "{{ city_region|safe }}";
+   var metro_coords = [37.7833, -122.4167];
+   var zoom_scale = 10;
+
+   if (metro_region == "SD") metro_coords = [32.715, -117.1625];
+   if (metro_region == "LA") { metro_coords = [34.05, -118.25]; zoom_scale = 9; }
+   if (metro_region == "CHI") metro_coords = [41.8369, -87.6847];
+   if (metro_region == "CIN") metro_coords = [39.1, -84.5167];
+
+    $("#venue_list").hide();
+   // jQuery methods go here...
+    var user_choices = "";
+{% if user_artist_list %}
+    user_choices = {{ user_artist_list|safe }};
+{% endif %}
+    var map = L.map('map').setView(metro_coords, zoom_scale);
+
+    var Stamen_TonerLite = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+        attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        subdomains: 'abcd',
+        minZoom: 0,
+        maxZoom: 20,
+        ext: 'png'
+    }).addTo(map);
+
+// Get json list of coordinate pairs
+var pack = {{ coords|safe }};
+
+var artists_html = "";
+ 
+for (var j = 0; j < pack.length; j++) {
+  var colors = ['red', 'blue', 'green', 'yellow', 'white'];
+  // Loop through list, plot each pair on map
+  artist_pack = pack[j];
+  // Start outer list (user artists)
+  artists_html += "Closest match for <b style='color: " + colors[j] + "; font-size: 110%;'>" + user_choices[j] + ":</b>  ";  
+  // Loop over venues for this artist
+  first_pass = 1;
+
+  for (var i = 0; i < pack[j].length; i++) {
+    if (i == 0) {
+      artists_html +=  '<ul>'+"<li style='color: " + colors[j] + ";'>"+'<a style="color: #000; font-size: 110%;" href="http://www.songkick.com/venues/'+artist_pack[i]['vid']+'" target="_blank">' + artist_pack[i]['evt_name'] + '</a></li></ul>';
+    if (pack[j].length > 1) {
+      artists_html += 'Other similar events: <ul>';
+     }
+
+    }  else {
+      artists_html += "<li style='color: " + colors[j] + ";'>" + '<a style="color: #777; text-size: 80%;" href="http://www.songkick.com/venues/'+artist_pack[i]['vid']+'" target="_blank">' + artist_pack[i]['evt_name'] + '</a>' + "</li>";
+    }
+   
+    var circle = L.circle([artist_pack[i]['lat'], artist_pack[i]['lon']], 250, {
+       color: colors[j],
+       //fillColor: '#f03',
+       fillOpacity: 0.6
+    }).addTo(map);
+    circle.bindPopup(
+        '<a href="http://www.songkick.com/venues/'+artist_pack[i]['vid']+'" target="_blank">'+artist_pack[i]['ven_name']+'</a>',
+        {maxWidth: 350}
+    );
+ // } // end each venue
+  }
+      if (pack[j].length > 1) {
+      artists_html += "</ul>";
+     }
+}
+console.log(artists_html);
+$("#venue_list").html(artists_html);
+{% if user_artist_list %}
+    $("#venue_list").slideDown(1000);  
+{% endif %}
+
+});
+
+</script>
+
+</body>
+</html>

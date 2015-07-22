@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <title>SceneHash</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Abel|Open+Sans:400,600" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ url_for('static', filename='css/leaflet.css') }}" rel="stylesheet" />
+    <script src="{{ url_for('static', filename='js/leaflet.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <style>
+.btn-custom {
+  background-color: hsl(220, 0%, 79%) !important;
+  background-repeat: repeat-x;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#dddddd", endColorstr="#c9c9c9");
+  background-image: -khtml-gradient(linear, left top, left bottom, from(#dddddd), to(#c9c9c9));
+  background-image: -moz-linear-gradient(top, #dddddd, #c9c9c9);
+  background-image: -ms-linear-gradient(top, #dddddd, #c9c9c9);
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #dddddd), color-stop(100%, #c9c9c9));
+  background-image: -webkit-linear-gradient(top, #dddddd, #c9c9c9);
+  background-image: -o-linear-gradient(top, #dddddd, #c9c9c9);
+  background-image: linear-gradient(#dddddd, #c9c9c9);
+  border-color: #c9c9c9 #c9c9c9 hsl(220, 0%, 77%);
+  color: #333 !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.13);
+  -webkit-font-smoothing: antialiased;
+}
+
+    body {
+      font-family: 'Lato', sans-serif;
+      background-image: url("/static/img/city_back.jpg");
+      background-repeat: no-repeat;
+      background-color: #fff;
+      color: #111;
+    }
+
+    input, select, textarea{
+      color: #333;
+   }
+
+#venue_list {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #bbb;
+    background-color: #fff;
+}
+
+.form-control {
+    border: 1;
+    border-color: #bbb;
+}
+
+a:link {
+    color: #111;
+}
+
+/* visited link */
+a:visited {
+    color: #111;
+}
+
+/* mouse over link */
+a:hover {
+    color: #111;
+}
+
+/* selected link */
+a:active {
+    color: #111;
+}
+
+    </style>
+
+  </head>
+
+{% import 'macros.html' as macros %} 
+
+  <body>
+
+
+
+<div class="container">
+    <!--Row with two equal columns-->
+    <div class="row">
+        <br/>
+        <div class="col-sm-10">
+          <a href="/" style="font-size: 230%;">Scene Hash</a> &nbsp; &nbsp; Find your sound.
+        </div>
+    </div>
+    
+    
+    <div class="row">
+        <div class="col-sm-10">
+<script async class="speakerdeck-embed" data-id="4df859325a1d441da45a71857d95a9b9" data-ratio="1.33333333333333" src="//speakerdeck.com/assets/embed.js"></script>
+        </div>
+    </div>
+
+</div>
+
+
+
+</body>
+</html>
