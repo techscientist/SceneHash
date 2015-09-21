@@ -10,6 +10,7 @@ import MySQLdb as mdb
 import scipy
 from scipy.spatial.distance import cosine as cosim
 
+# Need to add GENRE capability
 # Functions:
 # Fetch index for given entry of list
 def getIndex(element, my_list):
