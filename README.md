@@ -1,4 +1,4 @@
-# SceneHash
+# Scene Hash
 Web app for finding live shows and venues based on your favorite artists.
 
 [Scene Hash](http://scenehash.com)
